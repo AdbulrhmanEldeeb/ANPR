@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+env/
+.env/
+.venv/
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Machine Learning and Data files
+*.weights
+*.h5
+*.pkl
+*.model
+datasets/
+data/
+
+# Logs and Databases
+*.log
+*.sqlite
+*.db
+
+# Operating System files
+.DS_Store
+Thumbs.db
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Model and Training Artifacts
+*.pth
+*.pt
+*.onnx
+runs/
+logs/
+
+# Compiled files
+*.exe
+*.out
+*.app
+
+# Project-specific ignores
+results/
+output/
+temp/
+
+# other 
+*.mp4 
+videos/*
+trim
+detections

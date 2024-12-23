@@ -1,0 +1,112 @@
+Metadata-Version: 2.1
+Name: anpr
+Version: 0.1.0
+Summary: Automatic Number Plate Recognition in Real-Time
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: ultralytics==8.0.114
+Requires-Dist: opencv-python==4.7.0.72
+Requires-Dist: numpy==1.24.3
+Requires-Dist: easyocr==1.7.0
+Requires-Dist: filterpy==1.4.5
+Requires-Dist: pandas==2.0.2
+Requires-Dist: scipy==1.10.1
+Requires-Dist: matplotlib==3.7.1
+Requires-Dist: seaborn==0.12.2
+Provides-Extra: dev
+Requires-Dist: pytest==7.3.1; extra == "dev"
+Requires-Dist: pytest-cov==4.0.0; extra == "dev"
+Requires-Dist: black==23.3.0; extra == "dev"
+Requires-Dist: flake8==6.0.0; extra == "dev"
+Requires-Dist: mypy==1.3.0; extra == "dev"
+
+# Automatic Number Plate Recognition (ANPR)
+
+## Project Overview
+Real-time Automatic Number Plate Recognition system using computer vision and machine learning techniques.
+
+## Features
+- Real-time license plate detection
+- Optical Character Recognition (OCR)
+- Multi-vehicle tracking
+- High accuracy performance
+
+## Project Structure
+```
+anpr/
+├── src/
+│   └── anpr/
+│       ├── core/
+│       │   └── main.py         # Main application logic
+│       ├── utils/
+│       │   ├── utils.py        # Utility functions
+│       │   ├── visualize.py    # Visualization tools
+│       │   └── data_augmentation.py  # Data augmentation
+│       └── models/             # Model-related code
+├── tests/                      # Unit and integration tests
+├── data/                       # Dataset and model weights
+├── docs/                       # Project documentation
+├── notebooks/                  # Jupyter notebooks
+└── scripts/                    # Utility scripts
+```
+
+## Installation
+
+### Prerequisites
+- Python 3.8+
+- CUDA (optional, for GPU acceleration)
+
+### Setup
+1. Clone the repository
+```bash
+git clone https://github.com/yourusername/anpr.git
+cd anpr
+```
+
+2. Create virtual environment
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+```
+
+3. Install dependencies
+```bash
+pip install -e .  # Install in editable mode
+```
+
+## Usage
+```bash
+# Run the main application
+python -m anpr.core.main
+
+# Run tests
+pytest
+```
+
+## Contributing
+1. Fork the repository
+2. Create a feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
+
+## License
+MIT License
+
+## Acknowledgements
+- [YOLOv8](https://github.com/ultralytics/ultralytics)
+- OpenCV
+- EasyOCR
+
+## References
+[Add relevant research papers or references]
+
+## Contact
+Your Name - your.email@example.com
+
+Project Link: [https://github.com/yourusername/anpr](https://github.com/yourusername/anpr)
+
+you can watch the video here https://www.youtube.com/watch?v=SAm5bYjeu_k&t=7s
+
+## download video for test 
+https://www.pexels.com/video/traffic-flow-in-the-highway-2103099/
