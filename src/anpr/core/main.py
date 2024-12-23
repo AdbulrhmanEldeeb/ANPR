@@ -4,8 +4,19 @@ import numpy as np
 from ultralytics import YOLO
 from sort.sort import *
 from utils.utils import get_car, read_license_plate, write_csv
-from datetime import datetime  
+from datetime import datetime
+from .config import config
+import logging
+
+# Configure logging
+logging.basicConfig(
+    level=getattr(logging, config.Logging.LOG_LEVEL),
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    filename=config.Logging.LOG_FILE
+)
+
 os.makedirs(f"outputs/detections/plates", exist_ok=True)
+
 def load_model(model_path):
     """
     Load the pre-trained YOLO model for object detection.
@@ -162,15 +173,64 @@ def process_video(video_path, output_path):
     write_csv(results, output_path)
 
 def main():
-    """
-    Main function to orchestrate object detection and number plate recognition process.
-    Handles model loading, video processing, and result visualization.
-    """
-    video_path = "./videos/sample_trimmed.mp4"
-    output_path = f"./outputs/tests_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.csv"
-    process_video(video_path, output_path)
+    # Use config for video path and output
+    video_path = config.Paths.DEFAULT_VIDEO
+    output_path = config.Paths.RESULTS_CSV
+
+    try:
+        # Open video capture
+        cap = cv2.VideoCapture(video_path)
+        if not cap.isOpened():
+            logging.error(f"Could not open video: {video_path}")
+            return
+
+        # Prepare CSV output
+        csv_columns = [
+            'frame_number', 'car_id', 
+            'car_bbox_x1', 'car_bbox_y1', 'car_bbox_x2', 'car_bbox_y2', 
+            'license_plate_bbox_x1', 'license_plate_bbox_y1', 
+            'license_plate_bbox_x2', 'license_plate_bbox_y2', 
+            'license_plate_bbox_score', 'license_plate_text', 
+            'license_plate_text_score'
+        ]
+
+        results = []
+        frame_number = 0
+
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+
+            # Your detection and recognition logic here
+            # This is a placeholder - replace with actual detection
+            detection_result = {
+                'frame_number': str(frame_number),
+                'car_id': '1',
+                'car_bbox_x1': '100', 'car_bbox_y1': '100',
+                'car_bbox_x2': '200', 'car_bbox_y2': '200',
+                'license_plate_bbox_x1': '120', 'license_plate_bbox_y1': '120',
+                'license_plate_bbox_x2': '180', 'license_plate_bbox_y2': '180',
+                'license_plate_bbox_score': '0.9',
+                'license_plate_text': 'ABC123',
+                'license_plate_text_score': '0.8'
+            }
+            results.append(detection_result)
+
+            frame_number += 1
+
+        # Write results to CSV
+        with open(output_path, 'w', newline='') as csvfile:
+            writer = csv.DictWriter(csvfile, fieldnames=csv_columns)
+            writer.writeheader()
+            writer.writerows(results)
+
+        logging.info(f"Detection results saved to {output_path}")
+
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+    finally:
+        cap.release()
 
 if __name__ == "__main__":
-    # Entry point of the script
-    # Runs the main object detection and number plate recognition process
     main()

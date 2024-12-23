@@ -2,8 +2,20 @@ import ast
 import cv2
 import numpy as np
 import pandas as pd
-results_to_be_visualized=r"outputs\tests_2024-12-23_19-54-53_interpolated.csv"
-output_path="output.mp4"
+import csv
+import logging
+from ..config import config
+
+# Configure logging
+logging.basicConfig(
+    level=getattr(logging, config.Logging.LOG_LEVEL),
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    filename=config.Logging.LOG_FILE
+)
+
+results_to_be_visualized=config.Paths.INTERPOLATED_CSV
+output_path=config.Paths.OUTPUT_VIDEO
+
 def draw_border(
     img,
     top_left,
@@ -276,43 +288,52 @@ def main():
     """
     Main function to demonstrate license plate annotation.
     """
-    # Load video
-    video_path = "videos/sample_trimmed.mp4"
-    cap = load_video(video_path)
+    try:
+        # Use paths from config
+        video_path = config.Paths.DEFAULT_VIDEO
+        results_path = config.Paths.INTERPOLATED_CSV
+        output_path = config.Paths.OUTPUT_VIDEO
 
-    # Load detection results
-     
-    results = load_results(results_to_be_visualized)
+        # Load video
+        cap = cv2.VideoCapture(video_path)
+        if not cap.isOpened():
+            logging.error(f"Could not open video: {video_path}")
+            return
 
-    # Create license plate dictionary
-    license_plate_dict = create_license_plate_dict(results)
+        # Get video properties
+        fps = cap.get(cv2.CAP_PROP_FPS)
+        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
-    # Set up video writer
-    fourcc = cv2.VideoWriter_fourcc(*"mp4v")  # Specify the codec
-    fps = cap.get(cv2.CAP_PROP_FPS)
-    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
+        # Create VideoWriter object
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
 
-    frame_nmr = -1
+        # Load detection results
+        results = load_results(results_path)
 
-    cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
+        # Create license plate dictionary
+        license_plate_dict = create_license_plate_dict(results)
 
-    # Read frames
-    ret = True
-    while ret:
-        ret, frame = cap.read()
-        frame_nmr += 1
-        if ret:
+        frame_nmr = -1
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+
+            frame_nmr += 1
             annotated_frame = annotate_frame(frame, results, license_plate_dict, frame_nmr)
             out.write(annotated_frame)
-            frame = cv2.resize(frame, (1280, 720))
 
-    out.release()
-    cap.release()
+        logging.info(f"Annotated video saved to {output_path}")
+
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+
+    finally:
+        cap.release()
+        out.release()
 
 
 if __name__ == "__main__":
-    # Entry point of the script
-    # Runs license plate annotation
     main()
